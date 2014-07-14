@@ -1,3 +1,4 @@
+// Appears in Structured Parallel Programming, published by Elsevier, Inc.
 #include "mergesort.h"
 #include <cstdlib>
 #include <iostream>
