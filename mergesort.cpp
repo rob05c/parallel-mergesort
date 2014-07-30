@@ -125,9 +125,9 @@ void test_merge() {
 } // namespace
 
 namespace patterns {
-void forkjoin_mergesort() {
+void forkjoin_mergesort(const size_t size) {
   srand(time(NULL));
-  const int size = 1000000;
+
   typedef int data_t;
   unique_ptr<data_t[]> array(new data_t[size]);
   for(int i = 0, end = size; i != end; ++i) {
@@ -139,23 +139,24 @@ void forkjoin_mergesort() {
   cout << "parallel mergesort implemented via nested patterns" << endl;
   cout << "--------------------------------------------------" << endl;
   cout << "testing merge of " << size << "x array: " << endl;
-  {
-    const auto start = high_resolution_clock::now();
-    mergesort(array.get(), array.get() + size);
-    const auto end = high_resolution_clock::now();
-    const auto duration = end - start;
-    const auto ms = duration_cast<milliseconds>(duration).count();
-    cout << "parallel mergesort in " << ms << "ms" << endl;
-  }
-  {
-    const auto start = high_resolution_clock::now();
-    mergesort(array.get(), array.get() + size);
-    std::stable_sort(array_serial.get(), array_serial.get() + size);
-    const auto end = high_resolution_clock::now();
-    const auto duration = end - start;
-    const auto ms = duration_cast<milliseconds>(duration).count();
-    cout << "serial stable_sort in " << ms << "ms" << endl;
-  }
+
+  const auto start = high_resolution_clock::now();
+  mergesort(array.get(), array.get() + size);
+  const auto end = high_resolution_clock::now();
+  const auto duration = end - start;
+  const auto ms = duration_cast<milliseconds>(duration).count();
+  cout << "parallel mergesort in " << ms << "ms" << endl;
+
+
+  const auto start_serial = high_resolution_clock::now();
+  std::stable_sort(array_serial.get(), array_serial.get() + size);
+  const auto end_serial = high_resolution_clock::now();
+  const auto duration_serial = end_serial - start_serial;
+  const auto ms_serial = duration_cast<milliseconds>(duration_serial).count();
+  cout << "serial stable_sort in " << ms_serial << "ms" << endl;
+  const auto speedup = (double)ms_serial / ms;
+  cout << "speedup: " << speedup << endl;
+
   cout << endl;
 }
 } // namespace patterns
